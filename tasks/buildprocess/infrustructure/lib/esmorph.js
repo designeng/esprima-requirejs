@@ -154,6 +154,18 @@
         return functionList;
     }
 
+    // Find first define() function 
+
+    function findDefineFunction(code, tree) {
+        var functionList = [];
+
+        traverse(tree, function (node, path) {
+            console.log("NODE:", node, path)
+        });
+
+        return functionList;
+    }
+
     // Insert a prolog in the body of every function.
     // It will be in the form of a function call:
     //
@@ -311,6 +323,8 @@
     exports.modify = modify;
     
     exports.collectFunction = collectFunction;
+
+    exports.findDefineFunction = findDefineFunction;
 
     exports.Tracer = {
         FunctionEntrance: traceFunctionEntrance,

@@ -28,8 +28,12 @@ module.exports = (grunt) ->
 
                     optimize: "none"
 
-                    onBuildWrite: (moduleName, path, contents) ->
-                        contents = funcReWrighting.edit contents, path
+                    onBuildRead: (moduleName, path, contents) ->
+                        contents = "//-------------------\n" + contents
+
+                        # filter all vendor libs
+                        if path.indexOf("infrustructure") != -1
+                            contents = funcReWrighting.edit contents, path
 
                         return contents                                                                                                                                
 

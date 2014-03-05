@@ -14,6 +14,19 @@ require.config({
         "baseLayout": "core/layout/baseLayout",
         "globalEvents" : "core/globalEvents",
         "tableView" : "core/tableView"
+    },
+    shim:{
+        marionette: ["backbone"],
+        backbone: {
+          deps: ["underscore", "jquery"],
+          exports: "Backbone"
+        },
+        "backbone.wreqr": {
+          deps: ["backbone"]
+        },
+        "backbone.babysitter": {
+          deps: ["backbone"]
+        }
     }
 });
 

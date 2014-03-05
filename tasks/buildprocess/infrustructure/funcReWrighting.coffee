@@ -6,33 +6,46 @@ esmorph = require(__dirname + "/lib/esmorph")
 
 exports.edit = (content, path) ->
 
-    i = 0
-
-    console.log "PATH >>>>>>>>>>>>>>>>>>>>>", path
+    functionList = []
 
     AST = esprima.parse content, 
         range: true,
         loc: true,
         tolerant: true
 
-    for obj in AST.body
-        console.log("OBJ:::" + i, obj)
-        i++
-        if !obj.expression or !obj.expression.callee
 
-            return content
+    console.log "PATH:==========", path
+    esmorph.findDefineFunction(content, AST)
+    # functionList = esmorph.collectFunction(content, AST)
 
-        else if obj.type == "ExpressionStatement"
-            if obj.expression.callee.type == 'Identifier' and obj.expression.callee.name == 'define'
+    # console.log "functionList", functionList
 
-                startPos = obj.expression.range[0]
-                endPos = obj.expression.range[1]
-
-                console.log "PATH ===========", path
-
-                content = content.substring startPos, endPos
+    # console.log "AST", AST
 
     return content
+
+    # for obj in AST.body
+    #     i++
+    #     if !obj.expression or !obj.expression.callee
+    #         console.log "NO::::", path
+    #         return content
+
+    #     else if obj.type == "ExpressionStatement" and obj.expression.callee.type == 'Identifier' and obj.expression.callee.name == 'define'
+
+    #             startPos = obj.expression.range[0]
+    #             endPos = obj.expression.range[1]
+
+    #             console.log "PATH ===========", path
+
+    #             content = content.substring(startPos, endPos)
+
+    #             console.log "---------------------------------"
+    #             console.log content
+    #             console.log "/---------------------------------"
+
+
+
+    #     return content
 
     # if AST.body[0].expression.callee.object.body.body[0].expression
     #     console.log "============"
