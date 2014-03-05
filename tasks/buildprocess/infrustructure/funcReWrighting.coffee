@@ -6,14 +6,19 @@ esmorph = require(__dirname + "/lib/esmorph")
 
 exports.edit = (content, path) ->
 
+    i = 0
+
+    console.log "PATH >>>>>>>>>>>>>>>>>>>>>", path
+
     AST = esprima.parse content, 
         range: true,
         loc: true,
         tolerant: true
 
     for obj in AST.body
+        console.log("OBJ:::" + i, obj)
+        i++
         if !obj.expression or !obj.expression.callee
-            console.log "PATH>>>>>>", path
 
             return content
 

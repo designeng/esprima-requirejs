@@ -1,4 +1,4 @@
-funcReWrighting = require __dirname + "/../infrustructure/funcReWrighting"
+funcReWrighting = require __dirname + "/tasks/buildprocess/infrustructure/funcReWrighting"
 
 module.exports = (grunt) ->
   
@@ -34,16 +34,17 @@ module.exports = (grunt) ->
                         return contents                                                                                                                                
 
                     modules: [
-                            # name: "main"
-                            # include: ["main"]
-                            # create: true
-                        # ,                                                                                                       
                             name: "infrustructure"                                                        
-                            include: ["infrustructure" ]
-                            create: true
+                            # include: ["infrustructure"]
+                        ,
+                            name: "core"
+                            include: ["core"]
+                            exclude: ["infrustructure"]
                         ]
 
     grunt.loadNpmTasks "grunt-contrib-requirejs"
+    grunt.loadNpmTasks "grunt-contrib-connect"
+    grunt.loadNpmTasks "grunt-contrib-watch"
 
     grunt.task.loadTasks __dirname + "/tasks/buildprocess/infrustructure"
 
