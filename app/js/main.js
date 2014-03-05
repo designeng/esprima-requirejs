@@ -1,8 +1,19 @@
 require.config({
-    baseUrl: "/app/js"
+    baseUrl: "/app/js",
+    paths:{
+        // infrustructure
+        "backbone" : "vendor/backbone",
+        "marionette" : "vendor/backbone.marionette",
+        "underscore" : "vendor/underscore",
+        "jquery" : "vendor/jquery.min",
+
+        // core
+        "core" : "core/core",
+        "globalEvents" : "core/globalEvents",
+        "tableView" : "core/tableView"
+    }
 });
 
-require(["infrastructure", "page1", "page2"], function (){
-
-
+require(["infrustructure", "core"], function (core){
+    core.start()
 })

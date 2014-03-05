@@ -38,8 +38,8 @@ module.exports = (grunt) ->
                             # include: ["main"]
                             # create: true
                         # ,                                                                                                       
-                            name: "withwire"                                                        
-                            include: ["../mocha-tests/js/spec/withwire/withwire" ]
+                            name: "infrustructure"                                                        
+                            include: ["infrustructure" ]
                             create: true
                         ]
 
