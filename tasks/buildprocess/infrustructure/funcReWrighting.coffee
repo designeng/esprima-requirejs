@@ -1,4 +1,3 @@
-fs = require "fs"
 _ = require "underscore"
 esprima = require "esprima"
 escodegen = require "escodegen"    
@@ -20,20 +19,29 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
             # pattern: define( depsArray, func )
             depsArray = node.expression.arguments[0]
 
+            # modFunc {Function} - module's definition function
+            modFunc = node.expression.arguments[1]
+            # and modFunc.type == "FunctionExpression"
+
             # check if it's realy array of dependedcies, because if it's function ("FunctionExpression") - no dependedcies in current module
+            if depsArray.type is "FunctionExpression" and !modFunc
+                console.log "DEPSARR:NO"
+            
             # depsArray also must have elemants
             if depsArray.type is "ArrayExpression" and !_.isEmpty depsArray.elements
-                # func {Function}
-                # func = node.expression.arguments[1]
+
                 # modules {Array}
                 modules = _.map depsArray.elements, (el) -> return el.value
                 modules = filterDependencyModules modules, infrustructureModules, infrustructureArguments
+            else 
+                console.log "NO-----", depsArray.elements
 
 
 
             content = escodegen.generate node
             content = "//#{path}\n#{content}"
             return content
+
         index++
 
     return content
@@ -43,36 +51,12 @@ getAloneDefineNode = (body, index) ->
 
 filterDependencyModules = (modules, infModules, infArguments) ->
     # console.log "infModules", infModules
+
+    # counter for infrustructure's modules
+    k = 0
+
     for mod in modules
         if mod in infModules
+            k++
             console.log "IN INFRUSTR:", mod
 
-
-
-exports.insert = (filepath) ->
-
-    filepath = "./app/js/controls/dropdownlist/dropDownListControl.js"
-
-    content = fs.readFileSync(filepath, "utf-8")
-
-    AST = esprima.parse content, 
-        range: true,
-        loc: true,
-        tolerant: true
-
-    console.log "AST 1", AST.body[0].expression.callee.object.body.body[0].expression.arguments[0].elements
-    console.log "============"
-    console.log "AST 2", AST.body[0].expression.callee.object.body.body[0].expression.arguments[1].params
-
-    return
-
-    functionList = esmorph.collectFunction content, AST
-
-    mainDefinedFunc = functionList[0].node
-
-    console.log mainDefinedFunc.params
-
-    # here we can change params array:
-    mainDefinedFunc.params = []
-
-    # console.log escodegen.generate mainDefinedFunc
