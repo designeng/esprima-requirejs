@@ -1,10 +1,10 @@
 define([
-    "backbone",
-    "marionette",
-    "globalEvents",
-    "jquery",
+    "backbone", 
+    "marionette", 
+    "globalEvents", 
+    "jquery", 
     "tableView"
-], function (Backbone, Marionette, globalEvents, $, tableView){
+],function (Backbone, Marionette, GlobalEvents, $, TableView){
     var start = function (opt){
         console.log(opt)
     }

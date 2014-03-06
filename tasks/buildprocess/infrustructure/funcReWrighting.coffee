@@ -16,29 +16,28 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
 
             node = getAloneDefineNode AST.body, index
 
-            # pattern: define( depsArray, func )
-            depsArray = node.expression.arguments[0]
+            # pattern: define( depsArrayObj, func )
+            depsArrayObj = node.expression.arguments[0]
 
-            # modFunc {Function} - module's definition function
-            modFunc = node.expression.arguments[1]
-            # and modFunc.type == "FunctionExpression"
+            # modFuncObj {Function} - module's definition function
+            modFuncObj = node.expression.arguments[1]
+            # and modFuncObj.type == "FunctionExpression"
 
             # check if it's realy array of dependedcies, because if it's function ("FunctionExpression") - no dependedcies in current module
-            if depsArray.type is "FunctionExpression" and !modFunc
+            if depsArrayObj.type is "FunctionExpression" and !modFuncObj
                 console.log "DEPSARR:NO"
             
-            # depsArray also must have elemants
-            if depsArray.type is "ArrayExpression" and !_.isEmpty depsArray.elements
+            # depsArrayObj also must have elemants
+            if depsArrayObj.type is "ArrayExpression" and !_.isEmpty depsArrayObj.elements
 
                 # modules {Array}
-                modules = _.map depsArray.elements, (el) -> return el.value
-                modules = filterDependencyModules modules, infrustructureModules, infrustructureArguments
+                modules = _.map depsArrayObj.elements, (el) -> return el.value
+
+                node = filterDependencyModules node, depsArrayObj, modFuncObj, modules, infrustructureModules, infrustructureArguments
+                content = escodegen.generate node
             else 
-                console.log "NO-----", depsArray.elements
+                console.log "NO-----"
 
-
-
-            content = escodegen.generate node
             content = "//#{path}\n#{content}"
             return content
 
@@ -49,14 +48,112 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
 getAloneDefineNode = (body, index) ->     
     return body[index]
 
-filterDependencyModules = (modules, infModules, infArguments) ->
-    # console.log "infModules", infModules
+# @return params {Object}
+# params type {String}
+# params name {String} - we are intrested in this
+# params range {Object}
+# params loc {Object}
+removeApropriateFuncArgument = (params, arg) ->
+    params = _.filter params, (param) ->
+        return param.name != arg
+
+    return params
+
+removeApropriateElement = (elements, dep) ->
+    elements = _.filter elements, (el) ->
+        return el.value != dep
+
+    return elements
+
+insertInfrustructure = (node) ->
+
+    obj = 
+        "type": "Literal"
+        "value": "infrustructure"
+
+    node.expression.arguments[0].elements.unshift obj
+    return node
+
+insertInfrustructureArgument = (node) ->
+    obj = 
+        "type": "Identifier"
+        "name": "Infrustructure"
+
+    node.expression.arguments[1].params.unshift obj
+    return node
+
+insertInfrustructureFields = (node, parentObjectName, params) ->
+
+    for param in params
+        obj = 
+            "type": "VariableDeclaration"
+            "declarations": [
+                {
+                    "type": "VariableDeclarator"
+                    "id": {
+                        "type": "Identifier"
+                        "name": param.name
+                    },
+                    "init": {
+                        "type": "MemberExpression"
+                        "computed": false
+                        "object": {
+                            "type": "Identifier"
+                            "name": parentObjectName
+                        }
+                        "property": {
+                            "type": "Identifier"
+                            "name": param.name
+                        }
+                    }
+                }
+            ]
+            "kind": "var"
+
+        node.expression.arguments[1].body.body.unshift obj
+
+    return node
+
+
+filterDependencyModules = (node, depsArrayObj, modFuncObj, modules, infModules, infArguments) ->
+
+    inInfrustructure = []
+
+    elements = depsArrayObj.elements
+    params = modFuncObj.params
 
     # counter for infrustructure's modules
     k = 0
 
     for mod in modules
         if mod in infModules
+            # remove element from [dependencies]
+            elements = removeApropriateElement elements, infModules[k]
+            # remove apropriate function argument
+            _params = removeApropriateFuncArgument params, infArguments[k]
+            # removeApropriateFuncArgument modFuncObj.params, infArguments[k]
+
+            # difference
+            removedArgumentArr = _.difference params, _params
+            if !_.isEmpty removedArgumentArr
+                inInfrustructure.push removedArgumentArr[0]
+                params = _params
+
             k++
+
             console.log "IN INFRUSTR:", mod
+            console.log "elements", elements
+            console.log "params", params
+
+
+    console.log "inInfrustructure>>>>>>>>>>>", inInfrustructure
+
+    node.expression.arguments[0].elements = elements
+    node.expression.arguments[1].params = params
+
+    node = insertInfrustructure node
+    node = insertInfrustructureArgument node
+    node = insertInfrustructureFields node, "Infrustructure", inInfrustructure
+
+    return node
 
