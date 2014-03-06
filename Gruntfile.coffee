@@ -1,13 +1,19 @@
+_ = require "underscore"
+
 funcReWrighting = require __dirname + "/tasks/buildprocess/infrustructure/funcReWrighting"
 
-infrustructure = [
-    "backbone"
-    "marionette"
-    "underscore"
-    "jquery"
-    "backbone.wreqr"
-    "backbone.babysitter"
-]
+infrustructure =
+    "backbone" : "Backbone"
+    "marionette" : "Marionette"
+    "underscore" : "_"
+    "jquery" : "$"
+    "backbone.wreqr" : "BackboneWreqr"
+    "backbone.babysitter" : "BackboneBabysitter"
+
+infrustructureModules = _.keys infrustructure
+infrustructureArguments = _.values infrustructure
+
+console.log "infrustructureModules", infrustructureModules, infrustructureArguments
 relatedPublicBasePath = undefined
 
 module.exports = (grunt) ->
@@ -43,20 +49,20 @@ module.exports = (grunt) ->
                         if !relatedPublicBasePath
                             relatedPublicBasePath = grunt.config.get("requirejs.compile.options.dir") + "/" + grunt.config.get("requirejs.compile.options.baseUrl") + "/"
 
-                        # filter all vendor libs
-                        if path.indexOf("/vendor/") == -1
+                        # filter
+                        if path.indexOf("/core.js") != -1
                             path = path.split(relatedPublicBasePath)[1]
-                            contents = funcReWrighting.edit contents, path
+                            contents = funcReWrighting.edit contents, path, infrustructureModules, infrustructureArguments
 
                         return contents                                                                                                                                
 
                     modules: [
                             name: "infrustructure"                                                       
-                            include: infrustructure
+                            include: infrustructureModules
                         ,
                             name: "core"
                             include: ["core"]
-                            exclude: infrustructure
+                            exclude: infrustructureModules
                         ]
 
     grunt.loadNpmTasks "grunt-contrib-requirejs"

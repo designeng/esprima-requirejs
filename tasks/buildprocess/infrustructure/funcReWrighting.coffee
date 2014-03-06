@@ -4,7 +4,7 @@ esprima = require "esprima"
 escodegen = require "escodegen"    
 esmorph = require(__dirname + "/lib/esmorph")
 
-exports.edit = (content, path) ->
+exports.edit = (content, path, infrustructureModules, infrustructureArguments) ->
     # get tree
     AST = esprima.parse content, 
         range: true,
@@ -15,20 +15,38 @@ exports.edit = (content, path) ->
     for obj in AST.body
         if obj.type == "ExpressionStatement" and obj.expression.callee.type == 'Identifier' and obj.expression.callee.name == 'define'
 
-            content = getAloneDefineStatement content, AST.body, index
+            node = getAloneDefineNode AST.body, index
 
-            content = "//" + path + "\n#{content}"
+            # pattern: define( depsArray, func )
+            depsArray = node.expression.arguments[0]
 
+            # check if it's realy array of dependedcies, because if it's function ("FunctionExpression") - no dependedcies in current module
+            # depsArray also must have elemants
+            if depsArray.type is "ArrayExpression" and !_.isEmpty depsArray.elements
+                # func {Function}
+                # func = node.expression.arguments[1]
+                # modules {Array}
+                modules = _.map depsArray.elements, (el) -> return el.value
+                modules = filterDependencyModules modules, infrustructureModules, infrustructureArguments
+
+
+
+            content = escodegen.generate node
+            content = "//#{path}\n#{content}"
             return content
         index++
 
     return content
 
-getAloneDefineStatement = (content, body, index) ->
-    defineFunctionNode = body[index]
-    content = escodegen.generate defineFunctionNode
+getAloneDefineNode = (body, index) ->     
+    return body[index]
 
-    return content
+filterDependencyModules = (modules, infModules, infArguments) ->
+    # console.log "infModules", infModules
+    for mod in modules
+        if mod in infModules
+            console.log "IN INFRUSTR:", mod
+
 
 
 exports.insert = (filepath) ->
