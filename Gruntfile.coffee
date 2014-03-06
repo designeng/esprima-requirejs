@@ -1,5 +1,15 @@
 funcReWrighting = require __dirname + "/tasks/buildprocess/infrustructure/funcReWrighting"
 
+infrustructure = [
+    "backbone"
+    "marionette"
+    "underscore"
+    "jquery"
+    "backbone.wreqr"
+    "backbone.babysitter"
+]
+relatedPublicBasePath = undefined
+
 module.exports = (grunt) ->
   
     # Project configuration.
@@ -29,21 +39,24 @@ module.exports = (grunt) ->
                     optimize: "none"
 
                     onBuildRead: (moduleName, path, contents) ->
-                        contents = "//-------------------\n" + contents
+
+                        if !relatedPublicBasePath
+                            relatedPublicBasePath = grunt.config.get("requirejs.compile.options.dir") + "/" + grunt.config.get("requirejs.compile.options.baseUrl") + "/"
 
                         # filter all vendor libs
-                        if path.indexOf("infrustructure") != -1
+                        if path.indexOf("/vendor/") == -1
+                            path = path.split(relatedPublicBasePath)[1]
                             contents = funcReWrighting.edit contents, path
 
                         return contents                                                                                                                                
 
                     modules: [
-                            name: "infrustructure"                                                        
-                            # include: ["infrustructure"]
+                            name: "infrustructure"                                                       
+                            include: infrustructure
                         ,
                             name: "core"
                             include: ["core"]
-                            exclude: ["infrustructure"]
+                            exclude: infrustructure
                         ]
 
     grunt.loadNpmTasks "grunt-contrib-requirejs"

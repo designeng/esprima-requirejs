@@ -31,5 +31,5 @@ require.config({
 });
 
 require(["core", "infrustructure"], function (core){
-    core.start();
+    core.start("test");
 })
