@@ -26,7 +26,7 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
             if depsArrayObj.type is "FunctionExpression" and !modFuncObj
                 console.log "DEPSARR:NO"
             
-            # depsArrayObj also must have elemants
+            # depsArrayObj also must have elements
             if depsArrayObj.type is "ArrayExpression" and !_.isEmpty depsArrayObj.elements
 
                 # modules {Array}
@@ -55,10 +55,10 @@ getAloneDefineNode = (body, index) ->
 # params range {Object}
 # params loc {Object}
 removeApropriate = (params, arg, fieldName) ->
-    params = _.filter params, (param) ->
+    _params = _.filter params, (param) ->
         return param[fieldName] != arg
 
-    return params
+    return _params
 
 insertInfrustructure = (node) ->
 
@@ -126,12 +126,18 @@ filterDependencyModules = (node, modules, infModules, infArguments) ->
             removedArgumentArr = []
 
             # remove apropriate element from [dependencies]
-            elements = removeApropriate elements, infModules[k], "value"
+            elements = removeApropriate elements, mod, "value"
+
             # remove apropriate function argument
-            _params = removeApropriate params, infArguments[k], "name"
+            _params = removeApropriate params, infArguments[_.indexOf(infModules, mod)], "name"
 
             # difference
+            console.log "DIFF::::PARAMS:::", params
+            console.log "DIFF::::__PARAMS:::", _params
+            console.log "infModules-infArguments:::", infModules[k], infArguments[k]
+
             removedArgumentArr = _.difference params, _params
+
             if !_.isEmpty removedArgumentArr
                 inInfrustructure.push removedArgumentArr[0]
                 params = _params

@@ -15,7 +15,8 @@ require.config({
         "core" : "core/core",
         "baseLayout": "core/layout/baseLayout",
         "globalEvents" : "core/globalEvents",
-        "tableView" : "core/tableView"
+        "tableView" : "core/tableView",
+        "oneModule" : "core/one/oneModule"
     },
     shim:{
         marionette: ["backbone"],

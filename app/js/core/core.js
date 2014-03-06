@@ -6,8 +6,9 @@ define([
     "tableView",
     "meld",
     "moment",
-    "jquery"
-],function (Backbone, GlobalEvents, Marionette, TableView, Meld, Moment, $){
+    "jquery",
+    "oneModule"
+],function (Backbone, GlobalEvents, Marionette, TableView, Meld, Moment, $, oneModule){
     var start = function (opt){
         console.log(opt)
     }

@@ -55,6 +55,7 @@ module.exports = (grunt) ->
 
                         # filter
                         if path.indexOf("/vendor/") == -1
+                            # if path.indexOf("/oneModule") != -1
                             path = path.split(relatedPublicBasePath)[1]
                             contents = funcReWrighting.edit contents, path, infrustructureModules, infrustructureArguments
 
