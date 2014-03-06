@@ -24,7 +24,7 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
 
             # check if it's realy array of dependedcies, because if it's function ("FunctionExpression") - no dependedcies in current module
             if depsArrayObj.type is "FunctionExpression" and !modFuncObj
-                console.log "DEPSARR:NO"
+                console.log "DEPSARR:NO............................."
             
             # depsArrayObj also must have elements
             if depsArrayObj.type is "ArrayExpression" and !_.isEmpty depsArrayObj.elements
@@ -32,12 +32,8 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
                 # modules {Array}
                 modules = _.map depsArrayObj.elements, (el) -> return el.value
 
-                console.log "path-----------------", path
-
                 node = filterDependencyModules node, modules, infrustructureModules, infrustructureArguments
                 content = escodegen.generate node
-            else 
-                console.log "NO-----"
 
             content = "//#{path}\n#{content}"
             return content
@@ -132,23 +128,14 @@ filterDependencyModules = (node, modules, infModules, infArguments) ->
             _params = removeApropriate params, infArguments[_.indexOf(infModules, mod)], "name"
 
             # difference
-            console.log "DIFF::::PARAMS:::", params
-            console.log "DIFF::::__PARAMS:::", _params
-            console.log "infModules-infArguments:::", infModules[k], infArguments[k]
-
             removedArgumentArr = _.difference params, _params
 
             if !_.isEmpty removedArgumentArr
                 inInfrustructure.push removedArgumentArr[0]
                 params = _params
-            else
-                console.log "removedArgumentArr", removedArgumentArr.length
-
-            console.log "removedArgumentArr", removedArgumentArr
 
             # increase counter
             k++
-
 
     if !_.isEmpty inInfrustructure
         node.expression.arguments[0].elements = elements
