@@ -1,10 +1,13 @@
+// infrustructure libs at random ("backbone", "marionette", "jquery")
 define([
-    "backbone", 
+    "backbone",  
+    "globalEvents",
     "marionette", 
-    "globalEvents", 
-    "jquery", 
-    "tableView"
-],function (Backbone, Marionette, GlobalEvents, $, TableView){
+    "tableView",
+    "meld",
+    "moment",
+    "jquery"
+],function (Backbone, GlobalEvents, Marionette, TableView, Meld, Moment, $){
     var start = function (opt){
         console.log(opt)
     }

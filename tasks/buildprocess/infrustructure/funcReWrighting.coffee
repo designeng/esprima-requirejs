@@ -21,7 +21,6 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
 
             # modFuncObj {Function} - module's definition function
             modFuncObj = node.expression.arguments[1]
-            # and modFuncObj.type == "FunctionExpression"
 
             # check if it's realy array of dependedcies, because if it's function ("FunctionExpression") - no dependedcies in current module
             if depsArrayObj.type is "FunctionExpression" and !modFuncObj
@@ -33,7 +32,9 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
                 # modules {Array}
                 modules = _.map depsArrayObj.elements, (el) -> return el.value
 
-                node = filterDependencyModules node, depsArrayObj, modFuncObj, modules, infrustructureModules, infrustructureArguments
+                console.log "path-----------------", path
+
+                node = filterDependencyModules node, modules, infrustructureModules, infrustructureArguments
                 content = escodegen.generate node
             else 
                 console.log "NO-----"
@@ -50,20 +51,14 @@ getAloneDefineNode = (body, index) ->
 
 # @return params {Object}
 # params type {String}
-# params name {String} - we are intrested in this
+# params name/value {String} - we are intrested in this
 # params range {Object}
 # params loc {Object}
-removeApropriateFuncArgument = (params, arg) ->
+removeApropriate = (params, arg, fieldName) ->
     params = _.filter params, (param) ->
-        return param.name != arg
+        return param[fieldName] != arg
 
     return params
-
-removeApropriateElement = (elements, dep) ->
-    elements = _.filter elements, (el) ->
-        return el.value != dep
-
-    return elements
 
 insertInfrustructure = (node) ->
 
@@ -115,45 +110,47 @@ insertInfrustructureFields = (node, parentObjectName, params) ->
     return node
 
 
-filterDependencyModules = (node, depsArrayObj, modFuncObj, modules, infModules, infArguments) ->
+filterDependencyModules = (node, modules, infModules, infArguments) ->
 
     inInfrustructure = []
 
-    elements = depsArrayObj.elements
-    params = modFuncObj.params
+    elements = node.expression.arguments[0].elements
+    params   = node.expression.arguments[1].params
 
     # counter for infrustructure's modules
     k = 0
 
     for mod in modules
         if mod in infModules
-            # remove element from [dependencies]
-            elements = removeApropriateElement elements, infModules[k]
+
+            removedArgumentArr = []
+
+            # remove apropriate element from [dependencies]
+            elements = removeApropriate elements, infModules[k], "value"
             # remove apropriate function argument
-            _params = removeApropriateFuncArgument params, infArguments[k]
-            # removeApropriateFuncArgument modFuncObj.params, infArguments[k]
+            _params = removeApropriate params, infArguments[k], "name"
 
             # difference
             removedArgumentArr = _.difference params, _params
             if !_.isEmpty removedArgumentArr
                 inInfrustructure.push removedArgumentArr[0]
                 params = _params
+            else
+                console.log "removedArgumentArr", removedArgumentArr.length
 
+            console.log "removedArgumentArr", removedArgumentArr
+
+            # increase counter
             k++
 
-            console.log "IN INFRUSTR:", mod
-            console.log "elements", elements
-            console.log "params", params
 
+    if !_.isEmpty inInfrustructure
+        node.expression.arguments[0].elements = elements
+        node.expression.arguments[1].params = params
 
-    console.log "inInfrustructure>>>>>>>>>>>", inInfrustructure
-
-    node.expression.arguments[0].elements = elements
-    node.expression.arguments[1].params = params
-
-    node = insertInfrustructure node
-    node = insertInfrustructureArgument node
-    node = insertInfrustructureFields node, "Infrustructure", inInfrustructure
+        node = insertInfrustructure node
+        node = insertInfrustructureArgument node
+        node = insertInfrustructureFields node, "Infrustructure", inInfrustructure
 
     return node
 

@@ -2,11 +2,15 @@ _ = require "underscore"
 
 funcReWrighting = require __dirname + "/tasks/buildprocess/infrustructure/funcReWrighting"
 
+# keys - modules Ids, as they defined in requirejs paths
+# values - arguments to be specified
 infrustructure =
     "backbone" : "Backbone"
     "marionette" : "Marionette"
     "underscore" : "_"
     "jquery" : "$"
+    "moment" : "Moment"
+    "meld" : "Meld"
     "backbone.wreqr" : "BackboneWreqr"
     "backbone.babysitter" : "BackboneBabysitter"
 
@@ -50,7 +54,7 @@ module.exports = (grunt) ->
                             relatedPublicBasePath = grunt.config.get("requirejs.compile.options.dir") + "/" + grunt.config.get("requirejs.compile.options.baseUrl") + "/"
 
                         # filter
-                        if path.indexOf("/core.js") != -1
+                        if path.indexOf("/vendor/") == -1
                             path = path.split(relatedPublicBasePath)[1]
                             contents = funcReWrighting.edit contents, path, infrustructureModules, infrustructureArguments
 
@@ -62,7 +66,7 @@ module.exports = (grunt) ->
                         ,
                             name: "core"
                             include: ["core"]
-                            exclude: infrustructureModules
+                            exclude: _.flatten [infrustructureModules, "infrustructure"]
                         ]
 
     grunt.loadNpmTasks "grunt-contrib-requirejs"

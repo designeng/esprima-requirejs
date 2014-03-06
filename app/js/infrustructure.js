@@ -1,9 +1,18 @@
-define(["backbone", "marionette", "jquery", "underscore"], function(Backbone, Marionette, jQuery, _) {
+define([
+    "backbone",
+    "marionette",
+    "jquery",
+    "underscore",
+    "meld",
+    "moment"
+], function(Backbone, Marionette, $, _, Meld, Moment) {
     var infrustructure = {
       Backbone: Backbone,
       Marionette: Marionette,
-      $: jQuery,
-      _: _
+      $: $,
+      _: _,
+      Moment: Moment,
+      Meld: Meld
     };
     return infrustructure
 });

@@ -7,7 +7,9 @@ require.config({
         "underscore" : "vendor/underscore",
         "jquery" : "vendor/jquery.min",
         "backbone.wreqr" : "vendor/backbone.wreqr",
+        "meld"  : "vendor/meld",
         "backbone.babysitter" : "vendor/backbone.babysitter",
+        "moment"  : "vendor/moment",        
 
         // core
         "core" : "core/core",
