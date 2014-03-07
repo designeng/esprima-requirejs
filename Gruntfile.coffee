@@ -54,7 +54,7 @@ module.exports = (grunt) ->
                             relatedPublicBasePath = grunt.config.get("requirejs.compile.options.dir") + "/" + grunt.config.get("requirejs.compile.options.baseUrl") + "/"
 
                         # filter
-                        if path.indexOf("/vendor/") == -1
+                        if path.indexOf("/vendor/") == -1 and path.indexOf("infrustructure.js") == -1
                             path = path.split(relatedPublicBasePath)[1]
                             contents = funcReWrighting.edit contents, path, infrustructureModules, infrustructureArguments
 
