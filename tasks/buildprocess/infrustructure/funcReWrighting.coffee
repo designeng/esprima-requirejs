@@ -4,10 +4,7 @@ escodegen = require "escodegen"
 
 exports.edit = (content, path, infrustructureModules, infrustructureArguments) ->
     # get tree
-    AST = esprima.parse content, 
-        range: true,
-        loc: true,
-        tolerant: true
+    AST = esprima.parse content
 
     index = 0
     for obj in AST.body

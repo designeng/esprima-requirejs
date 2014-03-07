@@ -81,10 +81,7 @@ module.exports = (grunt) ->
         tplContent = fs.readFileSync(__dirname + '/tpl/infrustructure.js.tpl', "utf-8")
 
         # get tree
-        AST = esprima.parse tplContent, 
-            range: true,
-            loc: true,
-            tolerant: true
+        AST = esprima.parse tplContent
 
         # garanteed "define" function at the 0 array position
         node = AST.body[0]    
