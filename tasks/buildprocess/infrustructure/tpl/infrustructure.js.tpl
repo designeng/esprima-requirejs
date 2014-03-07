@@ -1,1 +1,0 @@
-define(<%=  infrustructure %>,function (){});
