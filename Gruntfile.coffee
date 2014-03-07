@@ -72,8 +72,16 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks "grunt-contrib-connect"
     grunt.loadNpmTasks "grunt-contrib-watch"
 
+    # loading...
+    # 1) grunt task createInfrustructure
+    # 2) module funcReWrighting
     grunt.task.loadTasks __dirname + "/tasks/buildprocess/infrustructure"
 
     
     grunt.registerTask 'build', ['requirejs']
+
+    # task for creating "infrustructure.js" module with infrustructure dependencies and Infrustructure object return
+    grunt.registerTask 'inf', ['createInfrustructure:' + infrustructureModules + ":" + infrustructureArguments + ":" + "app/js"]
+
+    # requirejs build task with server and watch
     grunt.registerTask 'default', ["requirejs", "connect:server", "watch"]
