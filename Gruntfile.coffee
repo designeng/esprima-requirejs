@@ -17,7 +17,6 @@ infrustructure =
 infrustructureModules = _.keys infrustructure
 infrustructureArguments = _.values infrustructure
 
-console.log "infrustructureModules", infrustructureModules, infrustructureArguments
 relatedPublicBasePath = undefined
 
 module.exports = (grunt) ->
