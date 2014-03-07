@@ -13,7 +13,7 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
     for obj in AST.body
         if obj.type == "ExpressionStatement" and obj.expression.callee.type == 'Identifier' and obj.expression.callee.name == 'define'
 
-            node = getAloneDefineNode AST.body, index
+            node = getAloneNode AST.body, index
 
             # pattern: define( depsArrayObj, func )
             depsArrayObj = node.expression.arguments[0]
@@ -41,7 +41,7 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
 
     return content
 
-getAloneDefineNode = (body, index) ->     
+getAloneNode = (body, index) ->     
     return body[index]
 
 # @return params {Object}

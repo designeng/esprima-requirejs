@@ -38,7 +38,7 @@ module.exports = (grunt) ->
 
         requirejs:
             compile:
-                options:                                                                                                        # Look at https://github.com/jfparadis/requirejs-handlebars/blob/master/build.js
+                options:                                                                                  
                     appDir: "app"
                     baseUrl: "js"
                     mainConfigFile: "app/js/main.js"
@@ -58,7 +58,7 @@ module.exports = (grunt) ->
                             path = path.split(relatedPublicBasePath)[1]
                             contents = funcReWrighting.edit contents, path, infrustructureModules, infrustructureArguments
 
-                        return contents                                                                                                                                
+                        return contents                                                                                                                               
 
                     modules: [
                             name: "infrustructure"                                                       
