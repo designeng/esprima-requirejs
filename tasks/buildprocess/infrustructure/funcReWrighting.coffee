@@ -1,7 +1,6 @@
 _ = require "underscore"
 esprima = require "esprima"
-escodegen = require "escodegen"    
-esmorph = require(__dirname + "/lib/esmorph")
+escodegen = require "escodegen"
 
 exports.edit = (content, path, infrustructureModules, infrustructureArguments) ->
     # get tree
