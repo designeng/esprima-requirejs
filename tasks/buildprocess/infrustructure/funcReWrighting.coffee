@@ -24,7 +24,7 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
 
             # check if it's realy array of dependedcies, because if it's function ("FunctionExpression") - no dependedcies in current module
             if depsArrayObj.type is "FunctionExpression" and !modFuncObj
-                console.log "DEPSARR:NO.............................", path
+                console.log "DEPSARR:EMPTY", path
             
             # depsArrayObj also must have elements
             if depsArrayObj.type is "ArrayExpression" and !_.isEmpty depsArrayObj.elements
@@ -56,19 +56,19 @@ removeApropriate = (params, arg, fieldName) ->
 
     return _params
 
-insertInfrustructure = (node) ->
+insertInfrustructure = (node, value) ->
 
     obj = 
         "type": "Literal"
-        "value": "infrustructure"
+        "value": value
 
     node.expression.arguments[0].elements.unshift obj
     return node
 
-insertInfrustructureArgument = (node) ->
+insertInfrustructureArgument = (node, name) ->
     obj = 
         "type": "Identifier"
-        "name": "Infrustructure"
+        "name": name
 
     node.expression.arguments[1].params.unshift obj
     return node
@@ -141,8 +141,8 @@ filterDependencyModules = (node, modules, infModules, infArguments) ->
         node.expression.arguments[0].elements = elements
         node.expression.arguments[1].params = params
 
-        node = insertInfrustructure node
-        node = insertInfrustructureArgument node
+        node = insertInfrustructure node, "infrustructure"
+        node = insertInfrustructureArgument node, "Infrustructure"
         node = insertInfrustructureFields node, "Infrustructure", inInfrustructure
 
     return node
