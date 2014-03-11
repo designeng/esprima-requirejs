@@ -8,6 +8,10 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
 
     index = 0
     for obj in AST.body
+
+        if !obj.expression or !obj.expression.callee
+            return content
+
         if obj.type == "ExpressionStatement" and obj.expression.callee.type == 'Identifier' and obj.expression.callee.name == 'define'
 
             node = getAloneNode AST.body, index
@@ -20,7 +24,7 @@ exports.edit = (content, path, infrustructureModules, infrustructureArguments) -
 
             # check if it's realy array of dependedcies, because if it's function ("FunctionExpression") - no dependedcies in current module
             if depsArrayObj.type is "FunctionExpression" and !modFuncObj
-                console.log "DEPSARR:NO............................."
+                console.log "DEPSARR:NO.............................", path
             
             # depsArrayObj also must have elements
             if depsArrayObj.type is "ArrayExpression" and !_.isEmpty depsArrayObj.elements
